@@ -36,31 +36,32 @@ while game_running:
         print()
         game.print_game(game_grid)
 
+        print("Your current score: " + str(player_score))
         dir = input("Player 1's move! (WASD only, Q for quit) ")
         print()
 
         if (dir == 'a'):
             temp = game.move_left(game_grid)
             game_over = temp[0]
-            player_score = temp[1]
+            player_score += temp[1]
             game.print_game(game_grid)
             dir = None
         elif (dir == 'd'):
             temp = game.move_right(game_grid)
             game_over = temp[0]
-            player_score = temp[1]
+            player_score += temp[1]
             game.print_game(game_grid)
             dir = None
         elif (dir == 's'):
             temp = game.move_down(game_grid)
             game_over = temp[0]
-            player_score = temp[1]
+            player_score += temp[1]
             game.print_game(game_grid)
             dir = None
         elif (dir == 'w'):
             temp = game.move_up(game_grid)
             game_over = temp[0]
-            player_score = temp[1]
+            player_score += temp[1]
             game.print_game(game_grid)
             dir = None
         elif (dir == 'q'):
