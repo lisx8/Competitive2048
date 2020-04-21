@@ -1,45 +1,41 @@
 import random
 
-#----------------------------------------Functions for game management----------------------------------------#
+generate_values = [2, 2, 4, 2, 2] # There's a higher chance of getting a 2 than a 4 when you generate
 
 # Prints game to console
 def print_game(game_grid):
     for i in range(0, 4):
-        print(game_grid[i])
-
-    print()
+        #for j in range(0, 4):
+            print(game_grid[i])
 
 def check_game_status(game_grid):
-    # Checks if any location on the game grid is empty, which automatically means that the game is not over.
+    # Checks if any spot in the game grid is empty, which automatically means the game can continue going.
     for i in range(0, 4):
         for j in range(0, 4):
             if game_grid[i][j] == 0:
                 return False
 
-    # If no spots are empty, all tiles that can move must therefore be right beside each other.
-    # Checks to see if any neighboring tiles can combine. Since if tile (2,1) can combine with (2,2) then vice versa
-    # must hold, and it's only necessary to check the right and bottom neighbor of each tile.
+    # If no spots are empty, all tiles that can move must therefore be right next to each other.
+    # Checks to see if any neighboring tiles can combine. Since if tile 2,1 can combine with 2,2 and vice versa,
+    # I'm not gonna waste time checking it in reverse, so we're checking the right and bottom of each tile
     for i in range(0, 3):
         for j in range(0, 3):
             if((game_grid[i][j] == game_grid[i][j + 1]) or (game_grid[i][j] == game_grid[i + 1][j])):
                 return False
 
-    # Checks the last column's bottom neighbors individually, since this is never checked in the previous for loop.
+    # Check last column individually, since we never check if the vertical stuff can combine
     for i in range(0, 3):
         if (game_grid[i][3] == game_grid[i + 1][3]):
             return False
 
     return True
 
-# Generates a random new tile, either 2 or 4, in a random empty location, with 2 being more likely.
+# Generates a random new tile, either 2 or 4, in a random empty location
 def random_new_tile(game_grid):
-    # Array holding the values for the random tiles that are generated after each move. Since there is a higher chance
-    # of getting a 2 than a 4, there are more 2s than 4s in the array.
-    generate_values = [2, 2, 4, 2, 2]
-    new_value = random.choice(generate_values)
+    new_value = random.choice(generate_values) # Generates a random number, either 2 or 4, with 2 higher in probability
 
-    # Finds all array values for where the tile == 0, stores their (x, y) coordinates, then randomly chooses
-    # one of these locations to hold the newly generated tile.
+    # Finds all array values for where the tile == 0, stores them, and them chooses between them
+    # at random
     empty_tiles = []
 
     for i in range(0, 4):
@@ -52,14 +48,12 @@ def random_new_tile(game_grid):
         new_location = random.choice(empty_tiles)
         game_grid[new_location[0]][new_location[1]] = new_value
 
-#----------------------------------------Functions for tile movement----------------------------------------#
-
 def move_left(game_grid):
     moved = 0
     tot_score = 0
     def add_left(arr):
         temp = 0
-        # Moves everything to the far left side of the grid.
+        # Moving everything to the far left side all together (getting rid of pesky 0s)
         for x in range(0, 4):
             if (arr[0] == 0):
                 if (arr[1] != 0 or arr[2] != 0 or arr[3] != 0):
@@ -83,10 +77,10 @@ def move_left(game_grid):
                 arr[3] = 0
 
         score = 0
-        # Adds all values together if they're the same, and keeps track of the total score of this move.
+        # Adding all values together
         if(arr[0] == arr[1] and arr[0] != 0):
             arr[0] += arr[1]
-            score = score + arr[0] + arr[1]
+            score = arr[0] + arr[1]
             arr[1] = arr[2]
             arr[2] = arr[3]
             arr[3] = 0
@@ -94,14 +88,14 @@ def move_left(game_grid):
 
         if(arr[1] == arr[2] and arr[1] != 0):
             arr[1] += arr[2]
-            score = score + arr[1] + arr[2]
+            score = arr[1] + arr[2]
             arr[2] = arr[3]
             arr[3] = 0
             temp += 1
 
         if(arr[2] == arr[3] and arr[2] != 0):
             arr[2] += arr[3]
-            score = score + arr[2] + arr[3]
+            score = arr[2] + arr[3]
             arr[3] = 0
             temp += 1
 
@@ -115,14 +109,13 @@ def move_left(game_grid):
     if (moved):
         random_new_tile(game_grid)
 
-    return (check_game_status(game_grid), tot_score)
+    return check_game_status(game_grid)
 
 def move_right(game_grid):
     moved = 0
-    tot_score = 0
     def add_right(arr):
         temp = 0
-        # Moves everything to the far right side of the grid.
+        # Moving everything to the far right side all together (getting rid of pesky 0s)
         for x in range(0, 4):
             if (arr[3] == 0):
                 if (arr[2] != 0 or arr[1] != 0 or arr[0] != 0):
@@ -145,11 +138,9 @@ def move_right(game_grid):
                 arr[1] = arr[0]
                 arr[0] = 0
 
-        score = 0
-        # Adds all values together if they're the same, and keeps track of the total score of this move.
+        # Adding all values together
         if (arr[3] == arr[2] and arr[3] != 0):
             arr[3] += arr[2]
-            score = score + arr[3] + arr[2]
             arr[2] = arr[1]
             arr[1] = arr[0]
             arr[0] = 0
@@ -157,34 +148,29 @@ def move_right(game_grid):
 
         if (arr[2] == arr[1] and arr[2] != 0):
             arr[2] += arr[1]
-            score = score + arr[2] + arr[1]
             arr[1] = arr[0]
             arr[0] = 0
             temp += 1
 
         if (arr[1] == arr[0] and arr[1] != 0):
             arr[1] += arr[0]
-            score = score + arr[1] + arr[0]
             arr[0] = 0
             temp += 1
 
-        return (temp, score)
+        return temp
 
     for i in range(0, 4):
-        value = add_right(game_grid[i])
-        moved += value[0]
-        tot_score += value[1]
+        moved += add_right(game_grid[i])
 
     if (moved):
         random_new_tile(game_grid)
 
-    return (check_game_status(game_grid), tot_score)
+    return check_game_status(game_grid)
 
 def move_up(game_grid):
     moved = 0
-    tot_score = 0
     def add_up(column):
-        # Moves everything to the far left side of the grid.
+        # Moving everything to the far top side all together (getting rid of pesky 0s)
         temp = 0
         for x in range(0, 4):
             if (game_grid[0][column] == 0):
@@ -208,11 +194,9 @@ def move_up(game_grid):
                 game_grid[2][column] = game_grid[3][column]
                 game_grid[3][column] = 0
 
-        score = 0
-        # Adds all values together if they're the same, and keeps track of the total score of this move.
+        # Adding all values together
         if (game_grid[0][column] == game_grid[1][column] and game_grid[0][column] != 0):
             game_grid[0][column] += game_grid[1][column]
-            score = score + game_grid[0][column] + game_grid[1][column]
             game_grid[1][column] = game_grid[2][column]
             game_grid[2][column] = game_grid[3][column]
             game_grid[3][column] = 0
@@ -220,35 +204,30 @@ def move_up(game_grid):
 
         if (game_grid[1][column] == game_grid[2][column] and game_grid[1][column] != 0):
             game_grid[1][column] += game_grid[2][column]
-            score = score + game_grid[1][column] + game_grid[2][column]
             game_grid[2][column] = game_grid[3][column]
             game_grid[3][column] = 0
             temp += 1
 
         if (game_grid[2][column] == game_grid[3][column] and game_grid[2][column] != 0):
             game_grid[2][column] += game_grid[3][column]
-            score = score + game_grid[2][column] + game_grid[3][column]
             game_grid[3][column] = 0
             temp += 1
 
-        return (temp, score)
+        return temp
 
     for i in range(0, 4):
-        value = add_up(i)
-        moved += value[0]
-        tot_score += value[1]
+        moved += add_up(i)
 
     if (moved):
         random_new_tile(game_grid)
 
-    return (check_game_status(game_grid), tot_score)
+    return check_game_status(game_grid)
 
 def move_down(game_grid):
     moved = 0
-    tot_score = 0
     def add_down(column):
         temp = 0
-        # Moves everything to the far bottom side of the grid
+        # Moving everything to the far bottom side all together (getting rid of pesky 0s)
         for x in range(0, 4):
             if (game_grid[3][column] == 0):
                 if ((game_grid[2][column] != 0) or (game_grid[1][column] != 0) or (game_grid[0][column] != 0)):
@@ -271,11 +250,9 @@ def move_down(game_grid):
                 game_grid[1][column] = game_grid[0][column]
                 game_grid[0][column] = 0
 
-        score = 0
-        # Adds all values together if they're the same, and keeps track of the total score of this move.
+        # Adding all values together
         if (game_grid[3][column] == game_grid[2][column] and game_grid[3][column] != 0):
             game_grid[3][column] += game_grid[2][column]
-            score = score + game_grid[3][column] + game_grid[2][column]
             game_grid[2][column] = game_grid[1][column]
             game_grid[1][column] = game_grid[0][column]
             game_grid[0][column] = 0
@@ -283,41 +260,24 @@ def move_down(game_grid):
 
         if (game_grid[2][column] == game_grid[1][column] and game_grid[2][column] != 0):
             game_grid[2][column] += game_grid[1][column]
-            score = score + game_grid[2][column] + game_grid[1][column]
             game_grid[1][column] = game_grid[0][column]
             game_grid[0][column] = 0
             temp += 1
 
         if (game_grid[1][column] == game_grid[0][column] and game_grid[1][column] != 0):
             game_grid[1][column] += game_grid[0][column]
-            score = score + game_grid[1][column] + game_grid[0][column]
             game_grid[0][column] = 0
             temp += 1
 
-        return (temp, score)
+        return temp
 
     for i in range(0, 4):
-        value = add_down(i)
-        moved += value[0]
-        tot_score += value[1]
+        moved += add_down(i)
 
     if (moved):
         random_new_tile(game_grid)
 
-    return (check_game_status(game_grid), tot_score)
-
-#----------------------------------------Functions for game power-ups----------------------------------------#
-
-def clear_board(game_grid):
-    score = 0
-    for i in range(0, 4):
-        for j in range(0, 4):
-            score += game_grid[i][j]
-            game_grid[i][j] = 0
-
-    return (score, game_grid)
-
-#-------------------------------------Functions for Pygame graphics generation-------------------------------------#
+    return check_game_status(game_grid)
 
 past_yell = (255, 255, 216) # https://www.schemecolor.com/pastel-world-color-palette.php
 past_oran = (255, 221, 170) # https://www.schemecolor.com/pastel-orange-with-cream.php
