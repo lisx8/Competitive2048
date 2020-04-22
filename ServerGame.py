@@ -26,6 +26,9 @@ while game_running:
         print("QUIT")
     elif(decoded_grid == 'p'): #Forced to pass turn by other player
         pass
+    elif(decoded_grid == 'o'):
+        print("Player 2 caused a game over!")
+        break
     else:
         array = decoded_grid.split(',')
         counter = 0
@@ -41,7 +44,7 @@ while game_running:
         game.print_game(game_grid)
 
         print("Your current score: " + str(player_score))
-        dir = input("Player 1's turn! (WASD only, Q for quit) ")
+        dir = input("Your turn! (WASD only, Q for quit) ")
         print()
 
         if (dir == 'a'):
@@ -79,9 +82,8 @@ while game_running:
             clear_power -= 1
         elif (dir == 'p') and (pass_power):
             pass_power -= 1
-            dir = None
 
-            temp_dir = input("You forced Player 2 to pass! Player 1's turn! (WASD only, Q for quit) ")
+            temp_dir = input("You forced Player 2 to pass! Your turn! (WASD only, Q for quit) ")
             print()
             if (temp_dir == 'a'):
                 temp = game.move_left(game_grid)
@@ -111,17 +113,21 @@ while game_running:
             game.print_game(game_grid)
             connection_socket.send(dir.encode())
             dir = None
+            continue
         elif (dir == 'q'):
             print("QUIT")
             connection_socket.send(dir.encode())
             game_running = False
 
-        list_grid = []
-        for i in range(0, 4):
-            for j in range(0, 4):
-                list_grid.append(str(game_grid[i][j]))
+        if(not game_over):
+            list_grid = []
+            for i in range(0, 4):
+                for j in range(0, 4):
+                    list_grid.append(str(game_grid[i][j]))
 
-        encode_grid = ','.join(list_grid)
-        connection_socket.send(encode_grid.encode())
+            encode_grid = ','.join(list_grid)
+            connection_socket.send(encode_grid.encode())
+        else:
+            connection_socket.send('o'.encode())
 
 connection_socket.close()

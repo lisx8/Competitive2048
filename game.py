@@ -329,7 +329,7 @@ past_cob = (141, 182, 217) # https://www.schemecolor.com/pastel-blues-and-mint.p
 past_grey = (222, 226, 217) # https://www.schemecolor.com/pastel-bouquet-color-palette.php
 past_pink = (244, 173, 198) # https://www.schemecolor.com/very-nice.php
 past_lave = (245, 225, 253) # https://www.schemecolor.com/pastel-purple-dream-color-combination.php
-past_purp = (179, 153, 212)
+past_purp = (179, 153, 212) # https://www.schemecolor.com/pastel-purple-dream-color-combination.php
 past_red = (255, 154, 162) # https://www.schemecolor.com/pastel-infinity-stones.php
 
 def find_color(x, y, game_grid):
